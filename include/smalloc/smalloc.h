@@ -1,13 +1,14 @@
 #ifndef SMALLOC_LIBRARY_H
 #define SMALLOC_LIBRARY_H
 
-#define __DEBUG
+#include "smalloc/internal/smalloc_result_t.h"
+
+// #define __DEBUG
 
 #ifdef __SMALLOC_INTERNAL_FUNCTIONS
+  #include "smalloc/internal/smalloc_mem_list.h"
   #include "smalloc/internal/smalloc_mem_stack.h"
 #endif
-
-#include "smalloc/internal/smalloc_result_t.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -29,6 +30,7 @@
     #define __SMALLOC_INTERNAL __attribute__( ( visibility( "hidden" ) ) )
   #else
     #define __SMALLOC_API
+    #define __SMALLOC_INTERNAL
   #endif
 #endif
 
@@ -36,7 +38,6 @@
 extern "C"
 {
 #endif
-
         typedef struct
         {
                 size_t current_allocations_stack;
@@ -52,13 +53,14 @@ extern "C"
         typedef struct
         {
                 smalloc_stack_t* alloc_stack;
-                // smalloc_list_t*       alloc_list;
+                smalloc_list_t*  alloc_list;
                 smalloc_stats_t  stats;
                 smalloc_result_t last_operation_result;
         } smalloc_ctx_t;
 
         /**
          * Initializes the smalloc context type.
+         *
          * @param ctx Pointer to an empty smalloc context
          * @param size Size of the context
          * @return SMALLOC_OK on success, error on failure
@@ -67,20 +69,23 @@ extern "C"
 
         /**
          * Destroys the smalloc context type. This will free all memory.
+         *
          * @param ctx Pointer to a smalloc context
          */
         __SMALLOC_API void             smalloc_free_destroy_ctx( smalloc_ctx_t** ctx );
 
         /**
          * Destroys the smalloc context type. This will <b>NOT</b> free any memory.
+         *
          * @param ctx Pointer to a smalloc context
          */
-        __SMALLOC_API void             smalloc_destroy_ctx( smalloc_ctx_t* ctx );
+        __SMALLOC_API void             smalloc_destroy_ctx( smalloc_ctx_t** ctx );
 
         /**
-         * Allocates memory of the given size. This will allocate memory from the smalloc context.
-         * @param ctx Pointer to a smalloc context
+         * Allocates memory of the given size.
+         *
          * @param size Size of the memory to allocate
+         * @param ctx Pointer to a smalloc context
          * @param flags Flags for the type of allocation, such as flags for allocating arrays or
          * allocating persistent memory to manually clean up
          * @return Pointer to the allocated memory
@@ -88,8 +93,21 @@ extern "C"
         __SMALLOC_API void* smalloc_alloc( size_t size, smalloc_ctx_t* ctx, uint32_t flags );
 
         /**
-         * Reallocates memory of the given size. This will reallocate memory within the smalloc
-         * context.
+         * Allocates an array of pointers of the given size, with the elements being elem_size big.
+         *
+         * @param size Size of the memory to allocate
+         * @param elem_size Size of a single element in the array
+         * @param ctx Pointer to a smalloc context
+         * @param flags Flags for the type of allocation, such as flags for allocating arrays or
+         * allocating persistent memory to manually clean up
+         * @return Pointer to the allocated memory
+         */
+        __SMALLOC_API void*
+        smalloc_alloc_arr( size_t size, size_t elem_size, smalloc_ctx_t* ctx, uint32_t flags );
+
+        /**
+         * Reallocates memory of the given size.
+         *
          * @param ctx Pointer to a smalloc context
          * @param size Size of the memory to allocate
          * @return Pointer to the reallocated memory
@@ -99,6 +117,7 @@ extern "C"
         /**
          * Reallocates memory of the given size. This will reallocate memory within the smalloc
          * context.
+         *
          * @param ctx Pointer to a smalloc context
          * @param size Size of the memory to allocate
          * @return Pointer to the reallocated memory
@@ -107,6 +126,7 @@ extern "C"
 
         /**
          * Adds a manually allocated pointer to the smalloc context to be managed by smalloc.
+         *
          * @param ctx Pointer to a smalloc context
          * @param size Size of the memory to allocate
          * @param flags Flags for the type of allocation
@@ -116,15 +136,31 @@ extern "C"
 
         /**
          * Frees all memory allocated within the given smalloc context.
+         *
          * @param ctx The smalloc context to free
          */
         __SMALLOC_API void  smalloc_free_all( smalloc_ctx_t* ctx );
 
         /**
-         * Frees a specific pointer within the smalloc context.
+         * Frees all memory allocated within the given smalloc context stack.
+         *
          * @param ctx The smalloc context to free
          */
-        __SMALLOC_API void  smalloc_free( smalloc_ctx_t* ctx, void* ptr );
+        //__SMALLOC_API void  smalloc_free_stack( smalloc_ctx_t* ctx );
+
+        /**
+         * Frees all memory allocated within the given smalloc context list.
+         *
+         * @param ctx The smalloc context to free
+         */
+        //__SMALLOC_API void  smalloc_free_list( smalloc_ctx_t* ctx );
+
+        /**
+         * Frees a specific pointer within the smalloc context.
+         *
+         * @param ctx The smalloc context to free
+         */
+        //__SMALLOC_API void  smalloc_free( smalloc_ctx_t* ctx, void* ptr );
 
         /**
          * Free only allocations with a specific flag type
@@ -132,8 +168,10 @@ extern "C"
          * @param ctx The smalloc context containing the allocations
          * @param type_flags The type flags to free
          */
-        __SMALLOC_API void  smalloc_free_by_type( smalloc_ctx_t* ctx, uint32_t type_flags );
+        //__SMALLOC_API void  smalloc_free_by_type( smalloc_ctx_t* ctx, uint32_t type_flags
+        //);
 
+#ifdef __DEBUG
         /**
          * Dumps allocation information for debugging purposes
          *
@@ -141,6 +179,7 @@ extern "C"
          * @param output The output file pointer to dump to (Closed in the function)
          */
         __SMALLOC_INTERNAL void smalloc_debug_dump( smalloc_ctx_t* ctx, FILE* output );
+#endif
 
 #ifdef __cplusplus
 }

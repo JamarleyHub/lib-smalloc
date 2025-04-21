@@ -8,6 +8,8 @@ add_library(smalloc SHARED
         src/smalloc.c
         src/smalloc_mem_list.c
         src/smalloc_mem_stack.c
+        src/smalloc_pointer_t.c
+        src/smalloc_result_t.c
 )
 
 # Set the library version properties
@@ -43,7 +45,7 @@ install(TARGETS smalloc
 
 # Install only the public header
 install(FILES include/smalloc/smalloc.h
-        DESTINATION include
+        DESTINATION smalloc
 )
 
 # Export targets

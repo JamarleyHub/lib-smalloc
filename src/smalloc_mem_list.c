@@ -1,3 +1,5 @@
+#define __SMALLOC_INTERNAL_FUNCTIONS
+
 #include "smalloc/internal/smalloc_mem_list.h"
 
 smalloc_result_t _i_smalloc_memlist_init( smalloc_list_t** list, const size_t init_cap ) {
@@ -70,4 +72,53 @@ smalloc_result_t _i_smalloc_memlist_add( smalloc_list_t* list, smalloc_pointer_t
         list->items[list->size] = ptr;
         list->size++;
         return SMALLOC_OK;
+}
+
+smalloc_result_t
+_i_smalloc_memlist_find( const smalloc_list_t* list, smalloc_pointer_t* ptr, size_t* index ) {
+        if ( NULL == list || NULL == ptr ) {
+                return SMALLOC_ERR_INVALID_PARAM;
+        }
+
+        if ( 0 == list->size ) {
+                return SMALLOC_ERR_LIST_EMPTY;
+        }
+
+        for ( size_t i = 0; i < list->size; i++ ) {
+                if ( list->items[i] == ptr ) {
+                        if ( index != NULL ) {
+                                *index = i;
+                        }
+                        return SMALLOC_OK;
+                }
+        }
+        return SMALLOC_ERR_PTR_NOT_FOUND;
+}
+
+smalloc_result_t _i_smalloc_memlist_remove( smalloc_list_t* list, smalloc_pointer_t* ptr ) {
+        if ( NULL == list || NULL == ptr ) {
+                return SMALLOC_ERR_INVALID_PARAM;
+        }
+
+        if ( 0 == list->size ) {
+                return SMALLOC_ERR_LIST_EMPTY;
+        }
+
+        for ( size_t i = 0; i < list->size; i++ ) {
+                if ( list->items[i] == ptr ) {
+                        free( list->items[i] );
+                        list->items[i] = NULL;
+                        // TODO: Possibly half the capacity if size * 2 < capacity
+                        for ( size_t j = i; j < list->size - 1; j++ ) {
+                                list->items[j] = list->items[j + 1];
+                        }
+                        list->size--;
+                        return SMALLOC_OK;
+                }
+        }
+        return SMALLOC_ERR_PTR_NOT_FOUND;
+}
+
+bool _i_smalloc_memlist_is_empty( const smalloc_list_t* list ) {
+        return ( NULL == list || 0 == list->size );
 }

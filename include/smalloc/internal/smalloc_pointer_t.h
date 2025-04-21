@@ -1,29 +1,102 @@
 #ifndef SMALLOC_SMALLOC_POINTER_T_H
 #define SMALLOC_SMALLOC_POINTER_T_H
 
+#include "smalloc/internal/smalloc_result_t.h"
+
 #include <stdint.h>
 #include <stdlib.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /**
  * Flags to set for individual smalloc pointers
  */
-#define SMALLOC_FLAG_AUTO          ( 1ULL << 0 )
-#define SMALLOC_FLAG_PERSIST       ( 1ULL << 1 )
+#define SMALLOC_FLAG_AUTO                  ( 1ULL << 0 )
+#define SMALLOC_FLAG_PERSIST               ( 1ULL << 1 )
+#define SMALLOC_FLAG_PTR_ARRAY             ( 1ULL << 2 )
 
-#define SET_FLAG( flags, flag )    ( ( flags ) |= ( flag ) )
-#define CLEAR_FLAG( flags, flag )  ( ( flags ) &= ~( flag ) )
-#define TOGGLE_FLAG( flags, flag ) ( ( flags ) ^= ( flag ) )
-#define IS_FLAG_SET( flags, flag ) ( ( ( flags ) & ( flag ) ) != 0 )
+#define SMALLOC_SET_FLAG( flags, flag )    ( ( flags ) |= ( flag ) )
+#define SMALLOC_CLEAR_FLAG( flags, flag )  ( ( flags ) &= ~( flag ) )
+#define SMALLOC_TOGGLE_FLAG( flags, flag ) ( ( flags ) ^= ( flag ) )
+#define SMALLOC_IS_FLAG_SET( flags, flag ) ( ( ( flags ) & ( flag ) ) != 0 )
 
-// #ifdef __SMALLOC_INTERNAL_FUNCTIONS
+#ifdef __SMALLOC_INTERNAL_FUNCTIONS
 
-typedef struct
-{
-        void*    ptr;
-        uint32_t flags;
-        size_t   size;
-} smalloc_pointer_t;
+        typedef enum
+        {
+                SMALLOC_TYPE_SINGLE    = 1, // Single allocation
+                SMALLOC_TYPE_PTR_ARRAY = 2  // Array of pointers
+        } smalloc_alloc_type_t;
 
-// #endif
+        typedef struct
+        {
+                void*                ptr;
+                smalloc_alloc_type_t type;
+                size_t               size;
+                size_t               elem_size;
+                uint32_t             flags;
+        } smalloc_pointer_t;
+
+        /**
+         * Create a smalloc pointer structure
+         *
+         * @param ptr [out] Pointer to the smalloc pointer structure to create
+         * @param size Size of the memory to allocate
+         * @param flags Flags for the type of allocation
+         * @return Result code indicating success or failure
+         */
+        smalloc_result_t
+        _i_smalloc_ptr_create_single( smalloc_pointer_t** ptr, size_t size, uint32_t flags );
+
+        /**
+         * Create a smalloc pointer structure for an array
+         *
+         * @param ptr [out] Pointer to the smalloc pointer structure to create
+         * @param arr_size Size of the array to allocate
+         * @param elem_size Size of the individual array elements
+         * @param flags Flags for the type of allocation
+         * @return Result code indicating success or failure
+         */
+        smalloc_result_t _i_smalloc_ptr_create_array( smalloc_pointer_t** ptr,
+                                                      size_t              arr_size,
+                                                      size_t              elem_size,
+                                                      uint32_t            flags );
+
+        /**
+         * Reallocate a smalloc single pointer structure
+         *
+         * @param ptr [out] Pointer to the smalloc pointer structure to reallocate
+         * @param size Size of the memory to allocate
+         * @param flags Flags for the type of allocation
+         * @return Result code indicating success or failure
+         */
+        smalloc_result_t _i_smalloc_ptr_realloc_single( smalloc_pointer_t** ptr, size_t size );
+
+        /**
+         * Reallocate a smalloc pointer structure for an array
+         *
+         * @param ptr [out] Pointer to the smalloc pointer structure to reallocate
+         * @param new_arr_size Size of the new array to allocate
+         * @return Result code indicating success or failure
+         */
+        smalloc_result_t _i_smalloc_ptr_realloc_array( smalloc_pointer_t** ptr,
+                                                       size_t              new_arr_size );
+
+        /**
+         * Destroy a smalloc pointer structure
+         *
+         * @param ptr [out] Pointer to the smalloc pointer structure to destroy
+         * @return Result code indicating success or failure
+         */
+        smalloc_result_t _i_smalloc_ptr_free( smalloc_pointer_t** ptr );
+
+#endif
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // SMALLOC_SMALLOC_POINTER_T_H
