@@ -57,7 +57,7 @@ extern "C"
          *
          * @param ctx Pointer to a smalloc context
          */
-        __SMALLOC_DEALLOCATOR_API void smalloc_free_destroy_ctx( smalloc_ctx_t** ctx );
+        __SMALLOC_API void             smalloc_free_destroy_ctx( smalloc_ctx_t** ctx );
 
         /**
          * Destroys the smalloc context type. This will <b>NOT</b> free any memory.
@@ -127,21 +127,21 @@ extern "C"
          *
          * @param ctx The smalloc context to free
          */
-        __SMALLOC_DEALLOCATOR_API void smalloc_free_all( smalloc_ctx_t* ctx );
+        __SMALLOC_API void smalloc_free_all( smalloc_ctx_t* ctx );
 
         /**
          * Frees all memory allocated within the given smalloc context stack.
          *
          * @param ctx The smalloc context to free
          */
-        //__SMALLOC_API void  smalloc_free_stack( smalloc_ctx_t* ctx );
+        __SMALLOC_API void smalloc_free_stack( smalloc_ctx_t* ctx );
 
         /**
          * Frees all memory allocated within the given smalloc context list.
          *
          * @param ctx The smalloc context to free
          */
-        //__SMALLOC_API void  smalloc_free_list( smalloc_ctx_t* ctx );
+        __SMALLOC_API void smalloc_free_list( smalloc_ctx_t* ctx );
 
         /**
          * Frees a specific pointer within the smalloc context.

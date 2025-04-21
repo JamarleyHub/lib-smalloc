@@ -152,3 +152,39 @@ __SMALLOC_API void smalloc_free_all( smalloc_ctx_t* ctx ) {
                 ctx->stats.total_allocations_freed++;
         }
 }
+
+__SMALLOC_API void smalloc_free_stack( smalloc_ctx_t* ctx ) {
+        if ( NULL == ctx ) {
+                return;
+        }
+
+        smalloc_pointer_t* ptr = NULL;
+        while ( !_i_smalloc_memstack_is_empty( ctx->alloc_stack ) ) {
+                smalloc_result_t res = _i_smalloc_memstack_pop( ctx->alloc_stack, &ptr );
+                if ( SMALLOC_ERR_STACK_EMPTY == res ) {
+                        break;
+                }
+                _i_smalloc_ptr_free( &ptr );
+                ctx->stats.current_allocations_stack--;
+                ctx->stats.total_allocations--;
+                ctx->stats.total_allocations_freed++;
+        }
+}
+
+__SMALLOC_API void smalloc_free_list( smalloc_ctx_t* ctx ) {
+        if ( NULL == ctx ) {
+                return;
+        }
+
+        smalloc_pointer_t* ptr = NULL;
+        for ( size_t i = 0; i < ctx->alloc_list->size; i++ ) {
+                ptr                  = ctx->alloc_list->items[i];
+                smalloc_result_t res = _i_smalloc_memlist_remove( ctx->alloc_list, ptr );
+                if ( SMALLOC_ERR_LIST_EMPTY == res ) {
+                        break;
+                }
+                ctx->stats.current_allocations_list--;
+                ctx->stats.total_allocations--;
+                ctx->stats.total_allocations_freed++;
+        }
+}
