@@ -1,4 +1,4 @@
-#include "smalloc/internal/smalloc_result_t.h"
+#include "smalloc/smalloc_result_t.h"
 
 char* smalloc_result_to_str( const smalloc_result_t result ) {
         switch ( result ) {

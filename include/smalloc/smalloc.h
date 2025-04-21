@@ -1,14 +1,10 @@
 #ifndef SMALLOC_LIBRARY_H
 #define SMALLOC_LIBRARY_H
 
-#include "smalloc/internal/smalloc_result_t.h"
+#define __DEBUG
 
-// #define __DEBUG
-
-#ifdef __SMALLOC_INTERNAL_FUNCTIONS
-  #include "smalloc/internal/smalloc_mem_list.h"
-  #include "smalloc/internal/smalloc_mem_stack.h"
-#endif
+#include "smalloc_result_t.h"
+#include "smalloc/internal/smalloc_flags.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -17,27 +13,16 @@
   #include <stdio.h>
 #endif
 
-#if defined( _WIN32 ) || defined( __CYGWIN__ )
-  // Windows is not supported just yet because who cares
-  #ifdef SMALLOC_EXPORTS
-    #define __SMALLOC_API __declspec( dllexport )
-  #else
-    #define __SMALLOC_API __declspec( dllimport )
-  #endif
-#else
-  #ifdef SMALLOC_EXPORTS
-    #define __SMALLOC_API      __attribute__( ( visibility( "default" ) ) )
-    #define __SMALLOC_INTERNAL __attribute__( ( visibility( "hidden" ) ) )
-  #else
-    #define __SMALLOC_API
-    #define __SMALLOC_INTERNAL
-  #endif
-#endif
+#include "smalloc/internal/smalloc_guards.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
+        typedef struct smalloc_stack_t smalloc_stack_t;
+        typedef struct smalloc_list_t  smalloc_list_t;
+
         typedef struct
         {
                 size_t current_allocations_stack;
@@ -72,7 +57,7 @@ extern "C"
          *
          * @param ctx Pointer to a smalloc context
          */
-        __SMALLOC_API void             smalloc_free_destroy_ctx( smalloc_ctx_t** ctx );
+        __SMALLOC_DEALLOCATOR_API void smalloc_free_destroy_ctx( smalloc_ctx_t** ctx );
 
         /**
          * Destroys the smalloc context type. This will <b>NOT</b> free any memory.
@@ -90,7 +75,8 @@ extern "C"
          * allocating persistent memory to manually clean up
          * @return Pointer to the allocated memory
          */
-        __SMALLOC_API void* smalloc_alloc( size_t size, smalloc_ctx_t* ctx, uint32_t flags );
+        __SMALLOC_ALLOCATOR_API void*
+        smalloc_alloc( size_t size, smalloc_ctx_t* ctx, uint32_t flags );
 
         /**
          * Allocates an array of pointers of the given size, with the elements being elem_size big.
@@ -102,7 +88,7 @@ extern "C"
          * allocating persistent memory to manually clean up
          * @return Pointer to the allocated memory
          */
-        __SMALLOC_API void*
+        __SMALLOC_ALLOCATOR_API void*
         smalloc_alloc_arr( size_t size, size_t elem_size, smalloc_ctx_t* ctx, uint32_t flags );
 
         /**
@@ -112,7 +98,8 @@ extern "C"
          * @param size Size of the memory to allocate
          * @return Pointer to the reallocated memory
          */
-        __SMALLOC_API void* smalloc_realloc( smalloc_ctx_t* ctx, void* ptr, size_t new_size );
+        __SMALLOC_ALLOCATOR_API void*
+        smalloc_realloc( smalloc_ctx_t* ctx, void* ptr, size_t new_size );
 
         /**
          * Reallocates memory of the given size. This will reallocate memory within the smalloc
@@ -122,7 +109,8 @@ extern "C"
          * @param size Size of the memory to allocate
          * @return Pointer to the reallocated memory
          */
-        __SMALLOC_API void* smalloc_realloc_arr( smalloc_ctx_t* ctx, void* ptr, size_t new_size );
+        __SMALLOC_ALLOCATOR_API void*
+                           smalloc_realloc_arr( smalloc_ctx_t* ctx, void* ptr, size_t new_size );
 
         /**
          * Adds a manually allocated pointer to the smalloc context to be managed by smalloc.
@@ -132,14 +120,14 @@ extern "C"
          * @param flags Flags for the type of allocation
          * @return Pointer to the allocated memory
          */
-        __SMALLOC_API void  smalloc_add_ptr_to_ctx( smalloc_ctx_t* ctx, void* ptr, uint32_t flags );
+        __SMALLOC_API void smalloc_add_ptr_to_ctx( smalloc_ctx_t* ctx, void* ptr, uint32_t flags );
 
         /**
          * Frees all memory allocated within the given smalloc context.
          *
          * @param ctx The smalloc context to free
          */
-        __SMALLOC_API void  smalloc_free_all( smalloc_ctx_t* ctx );
+        __SMALLOC_DEALLOCATOR_API void smalloc_free_all( smalloc_ctx_t* ctx );
 
         /**
          * Frees all memory allocated within the given smalloc context stack.
@@ -172,13 +160,13 @@ extern "C"
         //);
 
 #ifdef __DEBUG
-        /**
-         * Dumps allocation information for debugging purposes
-         *
-         * @param ctx The smalloc context containing the allocations
-         * @param output The output file pointer to dump to (Closed in the function)
-         */
-        __SMALLOC_INTERNAL void smalloc_debug_dump( smalloc_ctx_t* ctx, FILE* output );
+                /**
+                 * Dumps allocation information for debugging purposes
+                 *
+                 * @param ctx The smalloc context containing the allocations
+                 * @param output The output file pointer to dump to (Closed in the function)
+                 */
+                //__SMALLOC_INTERNAL void smalloc_debug_dump( smalloc_ctx_t* ctx, FILE* output );
 #endif
 
 #ifdef __cplusplus

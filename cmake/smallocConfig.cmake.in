@@ -1,4 +1,6 @@
 @PACKAGE_INIT@
 
 include("${CMAKE_CURRENT_LIST_DIR}/smalloc-targets.cmake")
+set_and_check(SMALLOC_INCLUDE_DIR "${PACKAGE_PREFIX_DIR}/include")
+set(SMALLOC_INCLUDE_DIRS "${SMALLOC_INCLUDE_DIR}")
 check_required_components(smalloc)

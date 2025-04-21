@@ -1,7 +1,7 @@
 #ifndef SMALLOC_SMALLOC_POINTER_T_H
 #define SMALLOC_SMALLOC_POINTER_T_H
 
-#include "smalloc/internal/smalloc_result_t.h"
+#include "smalloc/smalloc_result_t.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -11,17 +11,7 @@ extern "C"
 {
 #endif
 
-/**
- * Flags to set for individual smalloc pointers
- */
-#define SMALLOC_FLAG_AUTO                  ( 1ULL << 0 )
-#define SMALLOC_FLAG_PERSIST               ( 1ULL << 1 )
-#define SMALLOC_FLAG_PTR_ARRAY             ( 1ULL << 2 )
-
-#define SMALLOC_SET_FLAG( flags, flag )    ( ( flags ) |= ( flag ) )
-#define SMALLOC_CLEAR_FLAG( flags, flag )  ( ( flags ) &= ~( flag ) )
-#define SMALLOC_TOGGLE_FLAG( flags, flag ) ( ( flags ) ^= ( flag ) )
-#define SMALLOC_IS_FLAG_SET( flags, flag ) ( ( ( flags ) & ( flag ) ) != 0 )
+#include "smalloc/internal/smalloc_flags.h"
 
 #ifdef __SMALLOC_INTERNAL_FUNCTIONS
 
@@ -60,10 +50,10 @@ extern "C"
          * @param flags Flags for the type of allocation
          * @return Result code indicating success or failure
          */
-        smalloc_result_t _i_smalloc_ptr_create_array( smalloc_pointer_t** ptr,
-                                                      size_t              arr_size,
-                                                      size_t              elem_size,
-                                                      uint32_t            flags );
+        smalloc_result_t _i_smalloc_ptr_create_ptr_array( smalloc_pointer_t** ptr,
+                                                          size_t              arr_size,
+                                                          size_t              elem_size,
+                                                          uint32_t            flags );
 
         /**
          * Reallocate a smalloc single pointer structure

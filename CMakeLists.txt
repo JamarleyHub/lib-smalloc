@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.30)
+set(CMAKE_C_COMPILER clang)
 project(smalloc VERSION 1.0.0 LANGUAGES C)
 
 include(CMakePackageConfigHelpers)
@@ -26,12 +27,21 @@ if (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_definitions(smalloc PRIVATE SMALLOC_EXPORTS)
 endif ()
 
-# Set include directories for the build
+# IMPORTANT: Generate an export header instead of manual defines
+include(GenerateExportHeader)
+generate_export_header(smalloc
+        BASE_NAME SMALLOC
+        EXPORT_MACRO_NAME SMALLOC_EXPORT
+        EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/include/smalloc/smalloc_export.h
+        STATIC_DEFINE SMALLOC_STATIC)
+
+# Set include directories for the build - INCLUDE THE GENERATED HEADERS
 target_include_directories(smalloc
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include/smalloc/internal
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
 
@@ -43,9 +53,9 @@ install(TARGETS smalloc
         RUNTIME DESTINATION bin
 )
 
-# Install only the public header
-install(FILES include/smalloc/smalloc.h
-        DESTINATION smalloc
+install(DIRECTORY include/
+        DESTINATION include
+        FILES_MATCHING PATTERN "*.h"
 )
 
 # Export targets

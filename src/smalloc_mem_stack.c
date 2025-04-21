@@ -1,12 +1,12 @@
 #define __SMALLOC_INTERNAL_FUNCTIONS
 #include "smalloc/internal/smalloc_mem_stack.h"
 
-smalloc_result_t _i_smalloc_memstack_init( smalloc_stack_t** stack, const size_t init_cap ) {
+smalloc_result_t _i_smalloc_memstack_init( struct smalloc_stack_t** stack, const size_t init_cap ) {
         if ( ( *stack ) != NULL ) {
                 return SMALLOC_ERR_INVALID_PARAM;
         }
 
-        *stack = (smalloc_stack_t*) malloc( sizeof( smalloc_stack_t ) );
+        *stack = (struct smalloc_stack_t*) malloc( sizeof( struct smalloc_stack_t ) );
         if ( NULL == ( *stack ) ) {
                 return SMALLOC_ERR_OUT_OF_MEMORY;
         }
@@ -28,7 +28,7 @@ smalloc_result_t _i_smalloc_memstack_init( smalloc_stack_t** stack, const size_t
         return SMALLOC_OK;
 }
 
-smalloc_result_t _i_smalloc_memstack_destroy( smalloc_stack_t** stack ) {
+smalloc_result_t _i_smalloc_memstack_destroy( struct smalloc_stack_t** stack ) {
         if ( NULL == ( *stack ) ) {
                 return SMALLOC_ERR_INVALID_PARAM;
         }
@@ -51,7 +51,7 @@ smalloc_result_t _i_smalloc_memstack_destroy( smalloc_stack_t** stack ) {
         return SMALLOC_OK;
 }
 
-smalloc_result_t _i_smalloc_memstack_push( smalloc_stack_t* stack, smalloc_pointer_t* ptr ) {
+smalloc_result_t _i_smalloc_memstack_push( struct smalloc_stack_t* stack, smalloc_pointer_t* ptr ) {
         if ( NULL == stack || NULL == ptr ) {
                 return SMALLOC_ERR_INVALID_PARAM;
         }
@@ -76,7 +76,7 @@ smalloc_result_t _i_smalloc_memstack_push( smalloc_stack_t* stack, smalloc_point
         return SMALLOC_OK;
 }
 
-smalloc_result_t _i_smalloc_memstack_pop( smalloc_stack_t* stack, smalloc_pointer_t** ptr ) {
+smalloc_result_t _i_smalloc_memstack_pop( struct smalloc_stack_t* stack, smalloc_pointer_t** ptr ) {
         if ( NULL == stack ) {
                 return SMALLOC_ERR_INVALID_PARAM;
         }
@@ -93,7 +93,8 @@ smalloc_result_t _i_smalloc_memstack_pop( smalloc_stack_t* stack, smalloc_pointe
         return SMALLOC_OK;
 }
 
-smalloc_result_t _i_smalloc_memstack_peek( const smalloc_stack_t* stack, smalloc_pointer_t** ptr ) {
+smalloc_result_t _i_smalloc_memstack_peek( const struct smalloc_stack_t* stack,
+                                           smalloc_pointer_t**           ptr ) {
         if ( NULL == stack ) {
                 return SMALLOC_ERR_INVALID_PARAM;
         }
@@ -109,6 +110,12 @@ smalloc_result_t _i_smalloc_memstack_peek( const smalloc_stack_t* stack, smalloc
         return SMALLOC_OK;
 }
 
-bool _i_smalloc_memstack_is_empty( const smalloc_stack_t* stack ) {
-        return ( NULL == stack || 0 == stack->size );
+bool _i_smalloc_memstack_is_empty( const struct smalloc_stack_t* stack ) {
+        if ( NULL == stack ) {
+                return true;
+        }
+        if ( 0 == stack->size ) {
+                return true;
+        }
+        return false;
 }

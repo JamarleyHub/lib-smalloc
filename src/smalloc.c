@@ -1,5 +1,7 @@
 #define __SMALLOC_INTERNAL_FUNCTIONS
 
+#include "smalloc/internal/smalloc_internal.h"
+
 #include "smalloc/smalloc.h"
 
 __SMALLOC_API smalloc_result_t smalloc_init_ctx( smalloc_ctx_t** ctx ) {
@@ -97,7 +99,7 @@ smalloc_alloc_arr( size_t size, size_t elem_size, smalloc_ctx_t* ctx, uint32_t f
         }
 
         smalloc_pointer_t* ptr = NULL;
-        smalloc_result_t   res = _i_smalloc_ptr_create_array( &ptr, size, elem_size, flags );
+        smalloc_result_t   res = _i_smalloc_ptr_create_ptr_array( &ptr, size, elem_size, flags );
         if ( SMALLOC_OK != res ) {
                 return NULL;
         }
@@ -139,12 +141,12 @@ __SMALLOC_API void smalloc_free_all( smalloc_ctx_t* ctx ) {
                 ctx->stats.total_allocations_freed++;
         }
 
-        while ( !_i_smalloc_memlist_is_empty( ctx->alloc_list ) ) {
+        for ( size_t i = 0; i < ctx->alloc_list->size; i++ ) {
+                ptr                  = ctx->alloc_list->items[i];
                 smalloc_result_t res = _i_smalloc_memlist_remove( ctx->alloc_list, ptr );
                 if ( SMALLOC_ERR_LIST_EMPTY == res ) {
                         break;
                 }
-                _i_smalloc_ptr_free( &ptr );
                 ctx->stats.current_allocations_list--;
                 ctx->stats.total_allocations--;
                 ctx->stats.total_allocations_freed++;

@@ -224,3 +224,4 @@ smalloc_result_t _i_smalloc_ptr_free( smalloc_pointer_t** ptr ) {
         *ptr = NULL;
         return SMALLOC_OK;
 }
+

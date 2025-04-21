@@ -7,8 +7,8 @@ extern "C"
 #endif
 
 #ifdef __SMALLOC_INTERNAL_FUNCTIONS
+  #include "smalloc/smalloc_result_t.h"
   #include "smalloc_pointer_t.h"
-  #include "smalloc_result_t.h"
 
   #include <stdbool.h>
   #include <stddef.h>
@@ -20,12 +20,12 @@ extern "C"
          * Stack structure to track allocated pointers in LIFO order.
          * NOTE: Members should not be manually changed!
          */
-        typedef struct
+        struct smalloc_stack_t
         {
                 smalloc_pointer_t** items;    // Array of pointers to allocated memory
                 size_t              capacity; // Current capacity of the items array
                 size_t              size;     // Current number of items in the stack
-        } smalloc_stack_t;
+        };
 
         /**
          * Initialize a new stack with default capacity
@@ -34,7 +34,8 @@ extern "C"
          * @param init_cap Initial capacity of the stack (should be >= 8)
          * @return SMALLOC_OK on success, or an error code on failure
          */
-        smalloc_result_t _i_smalloc_memstack_init( smalloc_stack_t** stack, size_t init_cap );
+        smalloc_result_t _i_smalloc_memstack_init( struct smalloc_stack_t** stack,
+                                                   size_t                   init_cap );
 
         /**
          * Clean up and free all resources used by the stack
@@ -43,7 +44,7 @@ extern "C"
          * @param stack [out] The stack to destroy
          * @return SMALLOC_OK on success, or an error code on failure
          */
-        smalloc_result_t _i_smalloc_memstack_destroy( smalloc_stack_t** stack );
+        smalloc_result_t _i_smalloc_memstack_destroy( struct smalloc_stack_t** stack );
 
         /**
          * Push a pointer onto the stack
@@ -52,7 +53,8 @@ extern "C"
          * @param ptr [out] Pointer to push
          * @return SMALLOC_OK on success, or an error code on failure
          */
-        smalloc_result_t _i_smalloc_memstack_push( smalloc_stack_t* stack, smalloc_pointer_t* ptr );
+        smalloc_result_t _i_smalloc_memstack_push( struct smalloc_stack_t* stack,
+                                                   smalloc_pointer_t*      ptr );
 
         /**
          * Pop a pointer from the stack
@@ -61,7 +63,8 @@ extern "C"
          * @param ptr [out] Pointer to store the popped pointer
          * @return SMALLOC_OK on success, or an error code on failure
          */
-        smalloc_result_t _i_smalloc_memstack_pop( smalloc_stack_t* stack, smalloc_pointer_t** ptr );
+        smalloc_result_t _i_smalloc_memstack_pop( struct smalloc_stack_t* stack,
+                                                  smalloc_pointer_t**     ptr );
 
         /**
          * Peek at the top pointer of the stack without removing it.
@@ -72,8 +75,8 @@ extern "C"
          * @param ptr [out] Pointer to store the top pointer
          * @return SMALLOC_OK on success, or an error code on failure
          */
-        smalloc_result_t _i_smalloc_memstack_peek( const smalloc_stack_t* stack,
-                                                   smalloc_pointer_t**    ptr );
+        smalloc_result_t _i_smalloc_memstack_peek( const struct smalloc_stack_t* stack,
+                                                   smalloc_pointer_t**           ptr );
 
         /**
          * Check if the stack is empty
@@ -81,7 +84,7 @@ extern "C"
          * @param stack The stack to check
          * @return true if empty, false otherwise
          */
-        bool             _i_smalloc_memstack_is_empty( const smalloc_stack_t* stack );
+        bool             _i_smalloc_memstack_is_empty( const struct smalloc_stack_t* stack );
 
 #endif
 
