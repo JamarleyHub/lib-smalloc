@@ -112,7 +112,7 @@ smalloc_result_t _i_smalloc_ptr_realloc_array( smalloc_pointer_t** ptr, size_t n
         // This means we need to preserve the old element pointers and free them if the realloc
         // succeeds
         if ( new_arr_size < ( *ptr )->size ) {
-                void** tmp_elements = malloc( ( ( *ptr )->size - new_arr_size ) * sizeof( void* ) );
+                void** tmp_elements = calloc( ( ( *ptr )->size - new_arr_size ), sizeof( void* ) );
                 if ( NULL == tmp_elements ) {
                         return SMALLOC_ERR_OUT_OF_MEMORY;
                 }
@@ -129,7 +129,8 @@ smalloc_result_t _i_smalloc_ptr_realloc_array( smalloc_pointer_t** ptr, size_t n
                         free( tmp_elements[i - new_arr_size] );
                 }
                 free( tmp_elements );
-                ( *ptr )->ptr = new_ptr;
+                ( *ptr )->ptr  = new_ptr;
+                ( *ptr )->size = new_arr_size;
                 return SMALLOC_OK;
         }
 

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.30)
 set(CMAKE_C_COMPILER clang)
-project(smalloc VERSION 1.2.0 LANGUAGES C)
+project(smalloc VERSION 1.3.0 LANGUAGES C)
 
 include(CMakePackageConfigHelpers)
 

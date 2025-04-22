@@ -60,8 +60,20 @@ extern "C"
          * @return Result code indicating success or failure
          */
         smalloc_result_t _i_smalloc_memlist_find( const struct smalloc_list_t* list,
-                                                  smalloc_pointer_t*           ptr,
+                                                  const smalloc_pointer_t*     ptr,
                                                   size_t*                      index );
+
+        /**
+         * Retrieve a pointer from the list by its index
+         *
+         * @param list The list to search
+         * @param ptr If pointer is found, receives the pointer
+         * @param index The index of the pointer to retrieve
+         * @return Result code indicating success or failure
+         */
+        smalloc_result_t _i_smalloc_memlist_retrieve_index( const struct smalloc_list_t* list,
+                                                            smalloc_pointer_t**          ptr,
+                                                            size_t                       index );
 
         /**
          * Remove a pointer from the list by its memory address

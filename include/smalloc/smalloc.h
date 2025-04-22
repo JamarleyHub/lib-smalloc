@@ -93,6 +93,9 @@ extern "C"
 
         /**
          * Reallocates memory of the given size.
+         * NOTE: Reallocating a pointer is only allowed, if the pointer was marked as
+         * SMALLOC_FLAG_PERSIST.
+         * If the pointer was not marked as SMALLOC_FLAG_PERSIST, the function will return NULL.
          *
          * @param ctx Pointer to a smalloc context
          * @param size Size of the memory to allocate
@@ -148,7 +151,7 @@ extern "C"
          *
          * @param ctx The smalloc context to free
          */
-        //__SMALLOC_API void  smalloc_free( smalloc_ctx_t* ctx, void* ptr );
+        __SMALLOC_API void smalloc_free( smalloc_ctx_t* ctx, void* ptr );
 
         /**
          * Free only allocations with a specific flag type

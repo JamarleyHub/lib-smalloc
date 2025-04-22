@@ -75,7 +75,7 @@ smalloc_result_t _i_smalloc_memlist_add( struct smalloc_list_t* list, smalloc_po
 }
 
 smalloc_result_t _i_smalloc_memlist_find( const struct smalloc_list_t* list,
-                                          smalloc_pointer_t*           ptr,
+                                          const smalloc_pointer_t*     ptr,
                                           size_t*                      index ) {
         if ( NULL == list || NULL == ptr ) {
                 return SMALLOC_ERR_INVALID_PARAM;
@@ -86,7 +86,7 @@ smalloc_result_t _i_smalloc_memlist_find( const struct smalloc_list_t* list,
         }
 
         for ( size_t i = 0; i < list->size; i++ ) {
-                if ( list->items[i] == ptr ) {
+                if ( list->items[i]->ptr == ptr->ptr ) {
                         if ( index != NULL ) {
                                 *index = i;
                         }
@@ -94,6 +94,17 @@ smalloc_result_t _i_smalloc_memlist_find( const struct smalloc_list_t* list,
                 }
         }
         return SMALLOC_ERR_PTR_NOT_FOUND;
+}
+
+smalloc_result_t _i_smalloc_memlist_retrieve_index( const struct smalloc_list_t* list,
+                                                    smalloc_pointer_t**          ptr,
+                                                    const size_t                 index ) {
+        if ( NULL == list || index >= list->size ) {
+                return SMALLOC_ERR_INVALID_PARAM;
+        }
+
+        *ptr = list->items[index];
+        return SMALLOC_OK;
 }
 
 smalloc_result_t _i_smalloc_memlist_remove( struct smalloc_list_t* list, smalloc_pointer_t* ptr ) {

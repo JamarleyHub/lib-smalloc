@@ -117,12 +117,84 @@ smalloc_alloc_arr( size_t size, size_t elem_size, smalloc_ctx_t* ctx, uint32_t f
 }
 
 __SMALLOC_API void* smalloc_realloc( smalloc_ctx_t* ctx, void* ptr, size_t new_size ) {
-        return NULL;
+        if ( NULL == ctx ) {
+                return NULL;
+        }
+        if ( NULL == ptr || 0 == new_size ) {
+                ctx->last_operation_result = SMALLOC_ERR_INVALID_PARAM;
+                return NULL;
+        }
+
+        smalloc_pointer_t tmp_ptr = { 0 };
+        tmp_ptr.ptr               = ptr;
+        size_t           index    = 0;
+        smalloc_result_t res      = _i_smalloc_memlist_find( ctx->alloc_list, &tmp_ptr, &index );
+        if ( SMALLOC_OK != res ) {
+                ctx->last_operation_result = res;
+                return NULL;
+        }
+        smalloc_pointer_t* old_ptr = NULL;
+        res = _i_smalloc_memlist_retrieve_index( ctx->alloc_list, &old_ptr, index );
+        if ( SMALLOC_OK != res ) {
+                ctx->last_operation_result = res;
+                return NULL;
+        }
+
+        if ( SMALLOC_IS_FLAG_SET( old_ptr->flags, SMALLOC_FLAG_PTR_ARRAY ) ) {
+                ctx->last_operation_result = SMALLOC_ERR_INVALID_PTR_TYPE;
+                return NULL;
+        }
+        res = _i_smalloc_ptr_realloc_single( &old_ptr, new_size );
+        if ( SMALLOC_OK != res ) {
+                ctx->last_operation_result = res;
+                return NULL;
+        }
+
+        ptr                        = NULL;
+        ctx->last_operation_result = SMALLOC_OK;
+        return old_ptr->ptr;
 }
 
 __SMALLOC_API void* smalloc_realloc_arr( smalloc_ctx_t* ctx, void* ptr, size_t new_size ) {
-        return NULL;
+        if ( NULL == ctx ) {
+                return NULL;
+        }
+        if ( NULL == ptr || 0 == new_size ) {
+                ctx->last_operation_result = SMALLOC_ERR_INVALID_PARAM;
+                return NULL;
+        }
+
+        smalloc_pointer_t tmp_ptr = { 0 };
+        tmp_ptr.ptr               = ptr;
+        size_t           index    = 0;
+        smalloc_result_t res      = _i_smalloc_memlist_find( ctx->alloc_list, &tmp_ptr, &index );
+        if ( SMALLOC_OK != res ) {
+                ctx->last_operation_result = res;
+                return NULL;
+        }
+        smalloc_pointer_t* old_ptr = NULL;
+        res = _i_smalloc_memlist_retrieve_index( ctx->alloc_list, &old_ptr, index );
+        if ( SMALLOC_OK != res ) {
+                ctx->last_operation_result = res;
+                return NULL;
+        }
+
+        if ( !SMALLOC_IS_FLAG_SET( old_ptr->flags, SMALLOC_FLAG_PTR_ARRAY ) ) {
+                ctx->last_operation_result = SMALLOC_ERR_INVALID_PTR_TYPE;
+                return NULL;
+        }
+        res = _i_smalloc_ptr_realloc_array( &old_ptr, new_size );
+        if ( SMALLOC_OK != res ) {
+                ctx->last_operation_result = res;
+                return NULL;
+        }
+
+        ptr                        = NULL;
+        ctx->last_operation_result = SMALLOC_OK;
+        return old_ptr->ptr;
 }
+
+__SMALLOC_API void smalloc_add_ptr_to_ctx( smalloc_ctx_t* ctx, void* ptr, uint32_t flags ) { }
 
 __SMALLOC_API void smalloc_free_all( smalloc_ctx_t* ctx ) {
         if ( NULL == ctx ) {
@@ -188,3 +260,5 @@ __SMALLOC_API void smalloc_free_list( smalloc_ctx_t* ctx ) {
                 ctx->stats.total_allocations_freed++;
         }
 }
+
+__SMALLOC_API void smalloc_free( smalloc_ctx_t* ctx, void* ptr ) { }
