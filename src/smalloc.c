@@ -89,7 +89,7 @@ __SMALLOC_API void* smalloc_alloc( const size_t size, smalloc_ctx_t* ctx, uint32
 }
 
 __SMALLOC_API void*
-smalloc_alloc_arr( size_t size, size_t elem_size, smalloc_ctx_t* ctx, uint32_t flags ) {
+smalloc_alloc_arr( const size_t size, size_t elem_size, smalloc_ctx_t* ctx, uint32_t flags ) {
         if ( NULL == ctx || 0 == size || 0 == elem_size ) {
                 return NULL;
         }
@@ -194,7 +194,7 @@ __SMALLOC_API void* smalloc_realloc_arr( smalloc_ctx_t* ctx, void* ptr, size_t n
         return old_ptr->ptr;
 }
 
-__SMALLOC_API void smalloc_add_ptr_to_ctx( smalloc_ctx_t* ctx, void* ptr, uint32_t flags ) { }
+__SMALLOC_API void smalloc_add_ptr_to_ctx( smalloc_ctx_t* ctx, void* ptr, const size_t size, uint32_t flags ) { }
 
 __SMALLOC_API void smalloc_free_all( smalloc_ctx_t* ctx ) {
         if ( NULL == ctx ) {

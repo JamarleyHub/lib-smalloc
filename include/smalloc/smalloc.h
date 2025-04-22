@@ -123,7 +123,7 @@ extern "C"
          * @param flags Flags for the type of allocation
          * @return Pointer to the allocated memory
          */
-        __SMALLOC_API void smalloc_add_ptr_to_ctx( smalloc_ctx_t* ctx, void* ptr, uint32_t flags );
+        __SMALLOC_API void smalloc_add_ptr_to_ctx( smalloc_ctx_t* ctx, void* ptr, size_t size, uint32_t flags );
 
         /**
          * Frees all memory allocated within the given smalloc context.
