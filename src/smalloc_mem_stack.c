@@ -110,6 +110,49 @@ smalloc_result_t _i_smalloc_memstack_peek( const struct smalloc_stack_t* stack,
         return SMALLOC_OK;
 }
 
+smalloc_result_t
+_i_smalloc_memstack_find( const struct smalloc_stack_t* stack, const void* ptr, size_t* index ) {
+        if ( NULL == stack || NULL == ptr ) {
+                return SMALLOC_ERR_INVALID_PARAM;
+        }
+
+        // Check if the stack is empty
+        if ( 0 == stack->size ) {
+                return SMALLOC_ERR_STACK_EMPTY;
+        }
+
+        for ( size_t i = 0; i < stack->size; i++ ) {
+                if ( stack->items[i]->ptr == ptr ) {
+                        if ( index != NULL ) {
+                                *index = i;
+                        }
+                        return SMALLOC_OK;
+                }
+        }
+        return SMALLOC_ERR_PTR_NOT_FOUND;
+}
+
+smalloc_result_t _i_smalloc_memstack_retrieve_index( const struct smalloc_stack_t* stack,
+                                                     smalloc_pointer_t**           ptr,
+                                                     const size_t                  index ) {
+        if ( NULL == stack || NULL == ptr ) {
+                return SMALLOC_ERR_INVALID_PARAM;
+        }
+
+        // Check if the stack is empty
+        if ( 0 == stack->size ) {
+                return SMALLOC_ERR_STACK_EMPTY;
+        }
+
+        if ( index >= stack->size ) {
+                return SMALLOC_ERR_INVALID_PARAM;
+        }
+
+        *ptr = stack->items[index];
+
+        return SMALLOC_OK;
+}
+
 bool _i_smalloc_memstack_is_empty( const struct smalloc_stack_t* stack ) {
         if ( NULL == stack ) {
                 return true;

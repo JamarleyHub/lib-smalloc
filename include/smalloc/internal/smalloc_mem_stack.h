@@ -79,6 +79,30 @@ extern "C"
                                                    smalloc_pointer_t**           ptr );
 
         /**
+         * Find a pointer in the stack
+         *
+         * @param stack The stack to search
+         * @param ptr The pointer to find
+         * @param index [out] Index of the found pointer
+         * @return SMALLOC_OK on success, or an error code on failure
+         */
+        smalloc_result_t _i_smalloc_memstack_find( const struct smalloc_stack_t* stack,
+                                                   const void*                   ptr,
+                                                   size_t*                       index );
+
+        /**
+         * Retrieve a pointer from the stack at a specific index
+         *
+         * @param stack The stack to retrieve from, the pointer will not be popped from the stack
+         * @param ptr [out] Pointer to store the retrieved pointer
+         * @param index Index of the pointer to retrieve
+         * @return SMALLOC_OK on success, or an error code on failure
+         */
+        smalloc_result_t _i_smalloc_memstack_retrieve_index( const struct smalloc_stack_t* stack,
+                                                             smalloc_pointer_t**           ptr,
+                                                             const size_t                  index );
+
+        /**
          * Check if the stack is empty
          *
          * @param stack The stack to check

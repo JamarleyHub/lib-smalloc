@@ -83,6 +83,7 @@ If you find any allocation errors let me know.
 - [ ] Add the ability to free a pointer early
 - [ ] Add the ability to exclude a pointer from the auto free list (is that even useful? Why would you add it to smalloc
   in the first place if you don't want it free'd? For consistency? )
+- [ ] Retrieve the element size in an array of pointers
 
 ### License
 

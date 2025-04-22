@@ -76,6 +76,20 @@ extern "C"
                                                        size_t              new_arr_size );
 
         /**
+         * Create a smalloc pointer structure from an existing pointer
+         *
+         * @param ptr [out] Pointer to the smalloc pointer structure to create
+         * @param memory Pointer to the existing memory
+         * @param size Size of the memory
+         * @param flags Flags for the type of allocation
+         * @return Result code indicating success or failure
+         */
+        smalloc_result_t _i_smalloc_create_from_ptr( smalloc_pointer_t** ptr,
+                                                     void*               memory,
+                                                     size_t              size,
+                                                     uint32_t            flags );
+
+        /**
          * Destroy a smalloc pointer structure
          *
          * @param ptr [out] Pointer to the smalloc pointer structure to destroy

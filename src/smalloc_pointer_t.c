@@ -172,6 +172,29 @@ smalloc_result_t _i_smalloc_ptr_realloc_array( smalloc_pointer_t** ptr, size_t n
         return SMALLOC_OK;
 }
 
+smalloc_result_t
+_i_smalloc_create_from_ptr( smalloc_pointer_t** ptr, void* memory, size_t size, uint32_t flags ) {
+        if ( 0 == size || NULL == memory ) {
+                return SMALLOC_ERR_INVALID_PARAM;
+        }
+
+        if ( SMALLOC_IS_FLAG_SET( flags, SMALLOC_FLAG_PTR_ARRAY ) ) {
+                return SMALLOC_ERR_WRONG_PTR_CREATE_CALL;
+        }
+
+        *ptr = malloc( sizeof( smalloc_pointer_t ) );
+        if ( NULL == *ptr ) {
+                return SMALLOC_ERR_OUT_OF_MEMORY;
+        }
+        ( *ptr )->ptr       = memory;
+        ( *ptr )->type      = SMALLOC_TYPE_SINGLE;
+        ( *ptr )->size      = size;
+        ( *ptr )->elem_size = 0;
+        ( *ptr )->flags     = flags;
+
+        return SMALLOC_OK;
+}
+
 smalloc_result_t _i_smalloc_ptr_free( smalloc_pointer_t** ptr ) {
         if ( NULL == *ptr ) {
                 return SMALLOC_ERR_INVALID_PARAM;

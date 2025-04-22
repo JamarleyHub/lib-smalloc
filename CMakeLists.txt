@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.30)
 set(CMAKE_C_COMPILER clang)
-project(smalloc VERSION 1.3.1 LANGUAGES C)
+project(smalloc VERSION 1.4.0 LANGUAGES C)
 
 include(CMakePackageConfigHelpers)
 
@@ -99,7 +99,6 @@ if (VALGRIND)
             --show-leak-kinds=all
             --track-origins=yes
             --verbose
-            --suppressions=${CMAKE_SOURCE_DIR}/smalloc.supp
             --log-file=valgrind.log
             $<TARGET_FILE:SmallocTest>
             DEPENDS SmallocTest
