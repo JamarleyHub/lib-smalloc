@@ -91,3 +91,17 @@ find_package(smalloc REQUIRED)
 add_executable(SmallocTest test/test.c)
 
 target_link_libraries(SmallocTest PRIVATE smalloc::smalloc)
+
+find_program(VALGRIND "valgrind")
+if (VALGRIND)
+    add_custom_target(valgrind
+            COMMAND ${VALGRIND} --leak-check=full
+            --show-leak-kinds=all
+            --track-origins=yes
+            --verbose
+            --suppressions=${CMAKE_SOURCE_DIR}/smalloc.supp
+            --log-file=valgrind.log
+            $<TARGET_FILE:SmallocTest>
+            DEPENDS SmallocTest
+    )
+endif ()
