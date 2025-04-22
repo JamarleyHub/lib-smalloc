@@ -1,23 +1,23 @@
-# Smart Management Allocator
+#Smart Management Allocator
 
-To be honest: I was tired of always needing to free a few dozen pointers every time a malloc fails.
-Let's face it: It's dumb to always repeat the same code over and over again.
-Say your malloc fails and then you have to type this code over and over again and it keeps getting longer every time:
+To be honest :
+I was tired of always needing to free a few dozen pointers every time a malloc
+fails.Let 's face it: It' s dumb to always repeat the same code over and over again.Say your
+malloc fails and then you have to type this code over and over again and it keeps getting
+longer every time :
 
-```c
-void* ptr = malloc(sizeof(int) * 10);
-if (NULL == ptr) {
-        free(ptr1);
-        ptr1 = NULL;
-        free(ptr2)
-        ptr2 = NULL;
-        for(size_t i = 0; i < elements; i++) {
-            free(ptr3[i]);
-            ptr3[i] = NULL;
+```c void* ptr = malloc( sizeof( int ) * 10 );
+if ( NULL == ptr ) {
+        free( ptr1 );
+        ptr1              = NULL;
+        free( ptr2 ) ptr2 = NULL;
+        for ( size_t i = 0; i < elements; i++ ) {
+                free( ptr3[i] );
+                ptr3[i] = NULL;
         }
-        free(ptr3);
+        free( ptr3 );
         ptr3 = NULL;
-        free(ptr4);
+        free( ptr4 );
         ptr4 = NULL;
         // This is getting annoying, right?
         return NULL;
@@ -77,3 +77,14 @@ cmake -B cmake-build && cmake --build ./cmake-build --target valgrind -j 6
 
 The result will be saved in `cmake-build/valgrind.log`.
 If you find any allocation errors let me know.
+
+### TODO
+
+- [ ] Add the ability to free a pointer early
+- [ ] Add the ability to exclude a pointer from the auto free list (is that even useful? Why would you add it to smalloc
+  in the first place if you don't want it free'd? For consistency? )
+
+### License
+
+It's GPLv3. Feel free to do whatever you want with this. All bets are off, no warranty, no liability, but it's both free
+as in beer and free as in freedom. :)
