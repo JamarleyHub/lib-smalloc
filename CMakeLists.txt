@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.30)
 set(CMAKE_C_COMPILER clang)
-project(smalloc VERSION 1.1.0 LANGUAGES C)
+project(smalloc VERSION 1.2.0 LANGUAGES C)
 
 include(CMakePackageConfigHelpers)
 
@@ -85,3 +85,9 @@ install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/smallocConfigVersion.cmake
         DESTINATION lib/cmake/smalloc
 )
+
+find_package(smalloc REQUIRED)
+
+add_executable(SmallocTest test/test.c)
+
+target_link_libraries(SmallocTest PRIVATE smalloc::smalloc)

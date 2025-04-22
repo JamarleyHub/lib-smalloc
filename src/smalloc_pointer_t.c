@@ -175,7 +175,7 @@ smalloc_result_t _i_smalloc_ptr_free( smalloc_pointer_t** ptr ) {
         if ( NULL == *ptr ) {
                 return SMALLOC_ERR_INVALID_PARAM;
         }
-        if ( SMALLOC_TYPE_PTR_ARRAY == ( *ptr )->type || SMALLOC_TYPE_SINGLE == ( *ptr )->type ) {
+        if ( SMALLOC_TYPE_PTR_ARRAY != ( *ptr )->type && SMALLOC_TYPE_SINGLE != ( *ptr )->type ) {
                 return SMALLOC_ERR_INVALID_PTR_TYPE;
         }
         if ( 0 == ( *ptr )->size ) {
@@ -194,6 +194,7 @@ smalloc_result_t _i_smalloc_ptr_free( smalloc_pointer_t** ptr ) {
                         return SMALLOC_ERR_NO_PTR_FOUND;
                 }
                 free( ( *ptr )->ptr );
+                ( *ptr )->ptr = NULL;
                 free( *ptr );
                 *ptr = NULL;
                 return SMALLOC_OK;

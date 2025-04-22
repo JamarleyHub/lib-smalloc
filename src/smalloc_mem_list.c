@@ -107,8 +107,7 @@ smalloc_result_t _i_smalloc_memlist_remove( struct smalloc_list_t* list, smalloc
 
         for ( size_t i = 0; i < list->size; i++ ) {
                 if ( list->items[i]->ptr == ptr->ptr ) {
-                        free( list->items[i] );
-                        list->items[i] = NULL;
+                        _i_smalloc_ptr_free( &list->items[i] );
                         // TODO: Possibly half the capacity if size * 2 < capacity
                         for ( size_t j = i; j < list->size - 1; j++ ) {
                                 list->items[j] = list->items[j + 1];
