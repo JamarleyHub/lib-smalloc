@@ -94,8 +94,8 @@ extern "C"
         /**
          * Reallocates memory of the given size.
          * NOTE: Reallocating a pointer is only allowed, if the pointer was marked as
-         * SMALLOC_FLAG_PERSIST.
-         * If the pointer was not marked as SMALLOC_FLAG_PERSIST, the function will return NULL.
+         * SMALLOC_FLAG_DYNAMIC.
+         * If the pointer was not marked as SMALLOC_FLAG_DYNAMIC, the function will return NULL.
          *
          * @param ctx Pointer to a smalloc context
          * @param size Size of the memory to allocate
@@ -133,35 +133,47 @@ extern "C"
          * @param ptr Pointer to the memory
          * @return Size of the memory
          */
-        __SMALLOC_API size_t smalloc_get_ptr_size( smalloc_ctx_t* ctx, void* ptr );
+        __SMALLOC_API size_t           smalloc_get_ptr_size( smalloc_ctx_t* ctx, void* ptr );
+
+        /**
+         * Sets the flags for the given pointer.
+         *
+         * @param ctx Pointer to a smalloc context
+         * @param ptr Pointer to the memory
+         * @param flags Flags to set
+         * @return Result code indicating success or failure
+         */
+        __SMALLOC_API smalloc_result_t smalloc_set_flags( smalloc_ctx_t* ctx,
+                                                          void*          ptr,
+                                                          uint32_t       flags );
 
         /**
          * Frees all memory allocated within the given smalloc context.
          *
          * @param ctx The smalloc context to free
          */
-        __SMALLOC_API void   smalloc_free_all( smalloc_ctx_t* ctx );
+        __SMALLOC_API void             smalloc_free_all( smalloc_ctx_t* ctx );
 
         /**
          * Frees all memory allocated within the given smalloc context stack.
          *
          * @param ctx The smalloc context to free
          */
-        __SMALLOC_API void   smalloc_free_stack( smalloc_ctx_t* ctx );
+        __SMALLOC_API void             smalloc_free_stack( smalloc_ctx_t* ctx );
 
         /**
          * Frees all memory allocated within the given smalloc context list.
          *
          * @param ctx The smalloc context to free
          */
-        __SMALLOC_API void   smalloc_free_list( smalloc_ctx_t* ctx );
+        __SMALLOC_API void             smalloc_free_list( smalloc_ctx_t* ctx );
 
         /**
          * Frees a specific pointer within the smalloc context.
          *
          * @param ctx The smalloc context to free
          */
-        __SMALLOC_API void   smalloc_free( smalloc_ctx_t* ctx, void* ptr );
+        __SMALLOC_API void             smalloc_free( smalloc_ctx_t* ctx, void* ptr );
 
         /**
          * Free only allocations with a specific flag type

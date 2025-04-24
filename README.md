@@ -59,7 +59,7 @@ If a pointer does not need to be free'd early or you need to reallocate it later
 This will allocate the pointer to an internal stack and free it when you call free on it.
 
 If you need to reallocate the pointer or want to free the pointer early, then you can pass the
-`SMALLOC_FLAG_PERSIST` flag to the allocation function.
+`SMALLOC_FLAG_DYNAMIC` flag to the allocation function.
 (NOTE: I may have not implemented the specific feature of freeing the allocation early just yet. :) ).
 This will allocate the pointer to an internal list and give you the ability to reallocate the pointer or free it
 early (soonTM).

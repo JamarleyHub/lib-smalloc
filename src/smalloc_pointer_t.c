@@ -206,6 +206,18 @@ smalloc_result_t _i_smalloc_ptr_free( smalloc_pointer_t** ptr ) {
                 return SMALLOC_ERR_NO_PTR_FOUND;
         }
 
+        if (SMALLOC_IS_FLAG_SET((*ptr)->flags, SMALLOC_FLAG_PERSISTENT)) {
+                // If the pointer is persistent, we don't free it
+                ( *ptr )->type      = 0;
+                ( *ptr )->size  = 0;
+                ( *ptr )->elem_size = 0;
+                ( *ptr )->flags = 0;
+                (*ptr)->ptr = NULL;
+                free( *ptr );
+                *ptr = NULL;
+                return SMALLOC_OK;
+        }
+
         // Deallocation for single alloc pointers
         if ( SMALLOC_TYPE_SINGLE == ( *ptr )->type ) {
                 ( *ptr )->type      = 0;
