@@ -47,7 +47,7 @@ int main( void ) {
         }
 
         // This is a dynamic allocation which can be free'd earlier than the end of the function
-        char*  character3      = smalloc_alloc( sizeof( char ), ctx, SMALLOC_FLAG_DYNAMIC );
+        char* character3 = smalloc_alloc( sizeof( char ), ctx, SMALLOC_FLAG_DYNAMIC );
         if ( SMALLOC_OK != ctx->last_operation_result ) {
                 printf( "Allocation of character3 failed!\n" );
                 smalloc_free_destroy_ctx( &ctx );
@@ -103,6 +103,33 @@ int main( void ) {
         if ( SMALLOC_OK != ctx->last_operation_result ) {
                 printf( "Adding pointer to ctx failed!\n" );
                 free( int_array );
+                smalloc_free_destroy_ctx( &ctx );
+                return -1;
+        }
+
+        // This also works for 2D arrays, although these won't have an element size then, it's your
+        // job to manage that
+        float** float_array = malloc( sizeof( float* ) * 5 );
+        if ( NULL == float_array ) {
+                printf( "Allocation of float_array failed!\n" );
+                smalloc_free_destroy_ctx( &ctx );
+                return -1;
+        }
+        for ( size_t i = 0; i < 5; i++ ) {
+                float_array[i] = malloc( sizeof( float ) * 10 );
+                if ( NULL == float_array[i] ) {
+                        printf( "Allocation of float_array[%zu] failed!\n", i );
+                        for ( size_t j = 0; j < i; j++ ) {
+                                free( float_array[j] );
+                        }
+                        free( float_array );
+                        smalloc_free_destroy_ctx( &ctx );
+                        return -1;
+                }
+        }
+        smalloc_add_ptr_to_ctx( ctx, float_array, 5, SMALLOC_FLAG_PTR_ARRAY );
+        if ( SMALLOC_OK != ctx->last_operation_result ) {
+                printf( "Adding pointer to ctx failed!\n" );
                 smalloc_free_destroy_ctx( &ctx );
                 return -1;
         }

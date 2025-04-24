@@ -31,6 +31,10 @@ _i_smalloc_ptr_create_single( smalloc_pointer_t** ptr, const size_t size, const 
         return SMALLOC_OK;
 }
 
+// TODO: Back to the drawing board on that function :|
+// We don't need an array of pointers that are pointing to same sized memory, we need
+// a pointer to an array of differently sized pointers.
+// We should probably have a "put an n-sized pointer at this spot in the array" function
 smalloc_result_t _i_smalloc_ptr_create_ptr_array( smalloc_pointer_t** ptr,
                                                   const size_t        arr_size,
                                                   const size_t        elem_size,
@@ -178,16 +182,16 @@ _i_smalloc_create_from_ptr( smalloc_pointer_t** ptr, void* memory, size_t size, 
                 return SMALLOC_ERR_INVALID_PARAM;
         }
 
-        if ( SMALLOC_IS_FLAG_SET( flags, SMALLOC_FLAG_PTR_ARRAY ) ) {
-                return SMALLOC_ERR_WRONG_PTR_CREATE_CALL;
-        }
-
         *ptr = malloc( sizeof( smalloc_pointer_t ) );
         if ( NULL == *ptr ) {
                 return SMALLOC_ERR_OUT_OF_MEMORY;
         }
         ( *ptr )->ptr       = memory;
-        ( *ptr )->type      = SMALLOC_TYPE_SINGLE;
+
+        ( *ptr )->type      = SMALLOC_IS_FLAG_SET( flags, SMALLOC_FLAG_PTR_ARRAY )
+                                ? SMALLOC_TYPE_PTR_ARRAY
+                                : SMALLOC_TYPE_SINGLE;
+
         ( *ptr )->size      = size;
         ( *ptr )->elem_size = 0;
         ( *ptr )->flags     = flags;
@@ -206,13 +210,13 @@ smalloc_result_t _i_smalloc_ptr_free( smalloc_pointer_t** ptr ) {
                 return SMALLOC_ERR_NO_PTR_FOUND;
         }
 
-        if (SMALLOC_IS_FLAG_SET((*ptr)->flags, SMALLOC_FLAG_PERSISTENT)) {
+        if ( SMALLOC_IS_FLAG_SET( ( *ptr )->flags, SMALLOC_FLAG_PERSISTENT ) ) {
                 // If the pointer is persistent, we don't free it
                 ( *ptr )->type      = 0;
-                ( *ptr )->size  = 0;
+                ( *ptr )->size      = 0;
                 ( *ptr )->elem_size = 0;
-                ( *ptr )->flags = 0;
-                (*ptr)->ptr = NULL;
+                ( *ptr )->flags     = 0;
+                ( *ptr )->ptr       = NULL;
                 free( *ptr );
                 *ptr = NULL;
                 return SMALLOC_OK;
@@ -237,7 +241,7 @@ smalloc_result_t _i_smalloc_ptr_free( smalloc_pointer_t** ptr ) {
         }
 
         // Deallocation for array of pointers
-        if ( NULL == ( *ptr )->ptr || 0 == ( *ptr )->elem_size ) {
+        if ( NULL == ( *ptr )->ptr ) {
                 ( *ptr )->type      = 0;
                 ( *ptr )->size      = 0;
                 ( *ptr )->elem_size = 0;
