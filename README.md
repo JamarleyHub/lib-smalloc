@@ -2,8 +2,9 @@
 
 To be honest :
 I was tired of always needing to free a few dozen pointers every time a malloc
-fails.Let 's face it: It' s dumb to always repeat the same code over and over again.Say your
-malloc fails and then you have to type this code over and over again and it keeps getting
+fails.
+Let 's face it: It's dumb and error-prone to always repeat the same code.
+Say your malloc fails, then you have to type this code over and over again and it keeps getting
 longer every time :
 
 ```c void* ptr = malloc( sizeof( int ) * 10 );
@@ -60,9 +61,8 @@ This will allocate the pointer to an internal stack and free it when you call fr
 
 If you need to reallocate the pointer or want to free the pointer early, then you can pass the
 `SMALLOC_FLAG_DYNAMIC` flag to the allocation function.
-(NOTE: I may have not implemented the specific feature of freeing the allocation early just yet. :) ).
 This will allocate the pointer to an internal list and give you the ability to reallocate the pointer or free it
-early (soonTM).
+early.
 
 You can also use the allocate_arr functionality to allocate an array of pointers.
 Upon calling the regular `smalloc_free_all(ctx)`, it will automatically free all the pointers in the array.
@@ -87,5 +87,5 @@ If you find any allocation errors let me know.
 
 ### License
 
-It's GPLv3. Feel free to do whatever you want with this. All bets are off, no warranty, no liability, but it's both free
-as in beer and free as in freedom. :)
+It's GPLv3. Feel free to do whatever you want with this.
+All bets are off, no warranty, no liability, but it's both free as in beer and free as in freedom. :)
