@@ -86,11 +86,9 @@ install(FILES
         DESTINATION lib/cmake/smalloc
 )
 
-find_package(smalloc REQUIRED)
-
 add_executable(SmallocTest test/test.c)
 
-target_link_libraries(SmallocTest PRIVATE smalloc::smalloc)
+target_link_libraries(SmallocTest PRIVATE smalloc)
 
 find_program(VALGRIND "valgrind")
 if (VALGRIND)
