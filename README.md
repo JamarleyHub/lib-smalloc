@@ -80,9 +80,9 @@ If you find any allocation errors let me know.
 
 ### TODO
 
-- [ ] Add the ability to free a pointer early
-- [ ] Add the ability to exclude a pointer from the auto free list (is that even useful? Why would you add it to smalloc
-  in the first place if you don't want it free'd? For consistency? )
+- [X] ~~Add the ability to free a pointer early~~ *added in commit 2e3efed*
+- [x] ~~Add the ability to exclude a pointer from the auto free list~~ *added in commit 2e3efed*
+- [ ] Rewriting the ptr_array functionality to individually add pointers of different sizes to a void** array
 - [ ] Retrieve the element size in an array of pointers
 
 ### License
