@@ -9,10 +9,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#ifdef __DEBUG
-  #include <stdio.h>
-#endif
-
 #include "smalloc/internal/smalloc_guards.h"
 
 #ifdef __cplusplus
@@ -47,7 +43,6 @@ extern "C"
          * Initializes the smalloc context type.
          *
          * @param ctx Pointer to an empty smalloc context
-         * @param size Size of the context
          * @return SMALLOC_OK on success, error on failure
          */
         __SMALLOC_API smalloc_result_t smalloc_init_ctx( smalloc_ctx_t** ctx );
@@ -98,7 +93,8 @@ extern "C"
          * If the pointer was not marked as SMALLOC_FLAG_DYNAMIC, the function will return NULL.
          *
          * @param ctx Pointer to a smalloc context
-         * @param size Size of the memory to allocate
+         * @param ptr Pointer to the memory to reallocate
+         * @param new_size Size of the memory to allocate
          * @return Pointer to the reallocated memory
          */
         __SMALLOC_ALLOCATOR_API void*
@@ -109,7 +105,8 @@ extern "C"
          * context.
          *
          * @param ctx Pointer to a smalloc context
-         * @param size Size of the memory to allocate
+         * @param ptr Pointer to the memory to reallocate
+         * @param new_size Size of the memory to allocate
          * @return Pointer to the reallocated memory
          */
         __SMALLOC_ALLOCATOR_API void*
@@ -172,28 +169,9 @@ extern "C"
          * Frees a specific pointer within the smalloc context.
          *
          * @param ctx The smalloc context to free
+         * @param ptr Pointer to the memory to free
          */
         __SMALLOC_API void             smalloc_free( smalloc_ctx_t* ctx, void* ptr );
-
-        /**
-         * Free only allocations with a specific flag type
-         *
-         * @param ctx The smalloc context containing the allocations
-         * @param type_flags The type flags to free
-         */
-        //__SMALLOC_API void  smalloc_free_by_type( smalloc_ctx_t* ctx, uint32_t type_flags
-        //);
-
-#ifdef __DEBUG
-                /**
-                 * Dumps allocation information for debugging purposes
-                 *
-                 * @param ctx The smalloc context containing the allocations
-                 * @param output The output file pointer to dump to (Closed in the function)
-                 */
-                //__SMALLOC_INTERNAL void smalloc_debug_dump( smalloc_ctx_t* ctx, FILE* output );
-#endif
-
 #ifdef __cplusplus
 }
 #endif

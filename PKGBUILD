@@ -21,7 +21,7 @@ pkgver() {
 build() {
 	cd "$pkgname"
 	cmake -B cmake-build
-        cmake --build cmake-build -j 6
+    cmake --build cmake-build -j 6
 }
 
 package() {

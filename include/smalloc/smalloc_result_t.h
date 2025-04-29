@@ -1,7 +1,12 @@
 #ifndef SMALLOC_SMALLOC_RESULT_T_H
 #define SMALLOC_SMALLOC_RESULT_T_H
 
+#define SMALLOC_LAST_OP_FAILED( ctx )  SMALLOC_OK != ctx->last_operation_result
+#define SMALLOC_LAST_OP_SUCCESS( ctx ) SMALLOC_OK == ctx->last_operation_result
+#define SMALLOC_LAST_OP( ctx )         ctx->last_operation_result
+
 #ifdef __cplusplus
+
 extern "C"
 {
 #endif
